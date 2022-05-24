@@ -3,6 +3,8 @@ package org.sid.ebankingbackend;
 import org.sid.ebankingbackend.entities.*;
 import org.sid.ebankingbackend.enums.AccountStatus;
 import org.sid.ebankingbackend.enums.OperationType;
+import org.sid.ebankingbackend.exceptions.BalanceNotSufficientException;
+import org.sid.ebankingbackend.exceptions.BankAccountNoFoundException;
 import org.sid.ebankingbackend.exceptions.CustomerNotFountException;
 import org.sid.ebankingbackend.repositories.AccountOperationRepository;
 import org.sid.ebankingbackend.repositories.BankAccountRepository;
@@ -15,6 +17,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -95,10 +98,15 @@ public class EbankingBackendApplication {
                     try {
                         bankAccountService.saveCurrentAccount(Math.random()*90000,90000,customer.getId());
                         bankAccountService.saveSavingAccount(Math.random()*120000,5.5,customer.getId());
-                        bankAccountService.bankAccountList().forEach( acc ->{
+                        List<BankAccount> bankAccounts = bankAccountService.bankAccountList();
+                        for(BankAccount bankAccount:bankAccounts){
+                            for(int i = 0;i<10;i++){
+                                bankAccountService.credit(bankAccount.getId(),10000+Math.random()*120000,"Credit");
+                                bankAccountService.debit(bankAccount.getId(),100+Math.random()*9000,"Debit");
+                            }
+                        }
 
-                        });
-                    } catch (CustomerNotFountException e) {
+                    }catch (BankAccountNoFoundException | BalanceNotSufficientException | CustomerNotFountException e) {
                         e.printStackTrace();
                     }
 
