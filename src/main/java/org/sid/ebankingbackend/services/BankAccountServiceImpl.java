@@ -15,7 +15,6 @@ import org.sid.ebankingbackend.repositories.CustomerRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -44,10 +43,11 @@ public class BankAccountServiceImpl implements BankAccountService{
 //    Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
     @Override
-    public Customer saveCustomer(Customer customer) {
+    public CustomerDTO saveCustomer(CustomerDTO customerDTO) {
         log.info("Saving new customer");
+        Customer customer = dtomapper.fromCustomerDTO(customerDTO);
         Customer savedcustomer = customerRepository.save(customer);
-        return savedcustomer;
+        return dtomapper.fromCustomer(savedcustomer);
     }
 
     @Override
@@ -149,5 +149,25 @@ public class BankAccountServiceImpl implements BankAccountService{
     @Override
     public List<BankAccount> bankAccountList(){
         return bankAccountRepository.findAll();
+    }
+
+    @Override
+    public CustomerDTO getCustomer(Long customerID) throws CustomerNotFountException {
+       Customer customer = customerRepository.findById(customerID)
+                .orElseThrow(()->new CustomerNotFountException("Customer not found"));
+        return dtomapper.fromCustomer(customer);
+    }
+
+    @Override
+    public CustomerDTO updateCustomer(CustomerDTO customerDTO) {
+        log.info("Saving new customer");
+        Customer customer = dtomapper.fromCustomerDTO(customerDTO);
+        Customer savedcustomer = customerRepository.save(customer);
+        return dtomapper.fromCustomer(savedcustomer);
+    }
+
+    @Override
+    public void deleteCustomer(Long customerID){
+        customerRepository.deleteById(customerID);
     }
 }

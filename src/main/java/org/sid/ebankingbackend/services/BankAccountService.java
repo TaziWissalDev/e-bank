@@ -12,7 +12,7 @@ import org.sid.ebankingbackend.exceptions.CustomerNotFountException;
 import java.util.List;
 
 public interface BankAccountService {
-    Customer saveCustomer(Customer customer);
+    CustomerDTO saveCustomer(CustomerDTO customer);
     CurrentAccount saveCurrentAccount(double initialBalance, double overDraft, Long customerId) throws CustomerNotFountException;
     SavingAccount saveSavingAccount(double initialBalance, double interestRate, Long customerId) throws CustomerNotFountException;
 
@@ -25,4 +25,10 @@ public interface BankAccountService {
     void transfer(String accountIdSource,String accountIdDestination,double amount) throws BalanceNotSufficientException, BankAccountNoFoundException;
 
     List<BankAccount> bankAccountList();
+
+    CustomerDTO getCustomer(Long customerID) throws CustomerNotFountException;
+
+    CustomerDTO updateCustomer(CustomerDTO customerDTO);
+
+    void deleteCustomer(Long customerID);
 }
